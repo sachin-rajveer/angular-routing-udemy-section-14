@@ -12,7 +12,7 @@ import { ActivatedRoute, RouterLink, RouterOutlet } from '@angular/router';
 export class UserTasksComponent {
 
   userName = '';
-  userId = input.required<string>();
+  // userId = input.required<string>();
 
   private usersService = inject(UsersService);
   private destroyRef = inject(DestroyRef);
