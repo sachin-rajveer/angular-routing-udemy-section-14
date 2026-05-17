@@ -1,8 +1,8 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, DestroyRef, inject, input } from '@angular/core';
 
 import { TaskComponent } from './task/task.component';
 import { TasksService } from './tasks.service';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-tasks',
@@ -14,9 +14,24 @@ import { RouterLink } from '@angular/router';
 export class TasksComponent {
   userId = input.required<string>();
 
-  order = input<'asc' | 'desc'>();
+  order?: 'asc' | 'desc';
 
   private tasksService = inject(TasksService);
+  private activatedRoute = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
+
+  ngOnInit(): void {
+      const subscription = this.activatedRoute.queryParams.subscribe({
+        next: (param) => {
+          this.order = param['order'];
+        }
+      })
+
+      this.destroyRef.onDestroy(() => subscription.unsubscribe());
+
+
+  }
+
 
   userTasks = computed(() => this.tasksService.allTasks().filter((task) => task.userId === this.userId()));
 }
