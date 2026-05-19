@@ -2,7 +2,8 @@ import { Component, computed, DestroyRef, inject, input, signal } from '@angular
 
 import { TaskComponent } from './task/task.component';
 import { TasksService } from './tasks.service';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRouteSnapshot, ResolveFn, RouterLink, RouterStateSnapshot } from '@angular/router';
+import { Task } from './task/task.model';
 
 @Component({
   selector: 'app-tasks',
@@ -13,36 +14,30 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 })
 export class TasksComponent {
   userId = input.required<string>();
-
-  order = signal<'asc' | 'desc'>('desc');
-
-  private tasksService = inject(TasksService);
-  private activatedRoute = inject(ActivatedRoute);
-  private destroyRef = inject(DestroyRef);
-
-  ngOnInit(): void {
-    const subscription = this.activatedRoute.queryParams.subscribe({
-      next: (param) => {
-        this.order.set(param['order']);
-        
-        // = param['order'];
-      }
-    })
-
-    this.destroyRef.onDestroy(() => subscription.unsubscribe());
+  userTasks = input.required<Task[]>();
+  order = input.required<'asc' | 'desc'>();
+}
 
 
-  }
 
-
-  userTasks = computed(() => this.tasksService.allTasks()
-    .filter((task) => task.userId === this.userId())
+export const resolveTasks: ResolveFn<Task[]> = (
+  activatedRoute: ActivatedRouteSnapshot,
+  routerState: RouterStateSnapshot
+) => {
+  const tasksService = inject(TasksService);
+  const order = activatedRoute.queryParams['order'];
+  const userTasks = tasksService.allTasks()
+    .filter(
+      (task) => task.userId === activatedRoute.paramMap.get('userId')
+    )
     .sort((a, b) => {
-      if (this.order() === 'asc') {
+      if (order === 'asc') {
         return (a.id > b.id) ? -1 : 1;
       } else {
         return (a.id > b.id) ? 1 : -1;
       }
-    })
-  );
+    }
+    );
+
+  return userTasks.length > 0 ? userTasks : [];
 }
