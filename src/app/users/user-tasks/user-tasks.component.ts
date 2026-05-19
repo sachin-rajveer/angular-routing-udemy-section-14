@@ -16,12 +16,14 @@ export class UserTasksComponent {
 
   private usersService = inject(UsersService);
   private destroyRef = inject(DestroyRef);
+  message = input.required<string>();
 
   // userName = computed(() => this.usersService.users.find(u => u.id === this.userId())?.name)
 
   activatedRoute: ActivatedRoute = inject(ActivatedRoute);
 
   ngOnInit(): void {
+    console.log("The message is " + this.message());
       const subscription = this.activatedRoute.paramMap.subscribe({
         next: (paramMap) => {
           
