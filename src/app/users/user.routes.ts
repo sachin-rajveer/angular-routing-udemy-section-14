@@ -6,14 +6,14 @@ export const userRoutes: Routes = [
                 {
                     path: '',
                     redirectTo: 'tasks',
-                    pathMatch: 'prefix'
+                    pathMatch: 'full'
+                },
+                {
+                    path: 'tasks/new', //http://<your-domain>/users/<uid>/tasks/new
+                    component: NewTaskComponent
                 },
                 {
                     path: 'tasks', //http://<your-domain>/users/<uid>/tasks
                     component: TasksComponent
                 },
-                {
-                    path: 'tasks/new', //http://<your-domain>/users/<uid>/tasks/new
-                    component: NewTaskComponent
-                }
             ];
