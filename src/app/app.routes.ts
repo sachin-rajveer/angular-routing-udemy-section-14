@@ -9,8 +9,7 @@ import { inject } from "@angular/core";
 const dummyCanMatch: CanMatchFn = (route, segments) => {
     const router = inject(Router);
     const shouldGetAccess = Math.random();
-    if (shouldGetAccess > 0.5) {
-        console.log("canMatch returning false");
+    if (shouldGetAccess < 1) {
         return true;
     }
 
@@ -30,7 +29,7 @@ export const appRoutes: Routes = [
             component: UserTasksComponent,
             canMatch: [dummyCanMatch],
             children: userRoutes,
-            runGuardsAndResolvers: 'paramsOrQueryParamsChange',
+            runGuardsAndResolvers: 'always',
             data: {
                 message: 'Hello!'
             },
